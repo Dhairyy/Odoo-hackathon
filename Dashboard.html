@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fleet Command Center</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+}
+
+header {
+    background-color: #1f2937;
+    color: white;
+    padding: 15px 30px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.container {
+    padding: 20px 30px;
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.card h3 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    color: #555;
+}
+
+.card .value {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.filters {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+select {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.table-container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+th {
+    background-color: #f9fafb;
+}
+
+.status-ontrip { color: green; font-weight: bold; }
+.status-idle { color: orange; font-weight: bold; }
+.status-inshop { color: red; font-weight: bold; }
+
+.footer {
+    margin-top: 30px;
+    font-size: 13px;
+    color: #777;
+}
+</style>
+</head>
+
+<body>
+
+<header>🚛 Fleet Command Center</header>
+
+<div class="container">
+
+    <!-- Filters -->
+    <div class="filters">
+        <select id="vehicleTypeFilter">
+            <option value="All">All Vehicle Types</option>
+            <option value="Truck">Truck</option>
+            <option value="Van">Van</option>
+            <option value="Bike">Bike</option>
+        </select>
+
+        <select id="statusFilter">
+            <option value="All">All Status</option>
+            <option value="On Trip">On Trip</option>
+            <option value="Idle">Idle</option>
+            <option value="In Shop">In Shop</option>
+        </select>
+
+        <select id="regionFilter">
+            <option value="All">All Regions</option>
+            <option value="North">North</option>
+            <option value="South">South</option>
+            <option value="East">East</option>
+            <option value="West">West</option>
+        </select>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+        <div class="card">
+            <h3>Active Fleet</h3>
+            <div class="value" id="activeFleet">0</div>
+        </div>
+
+        <div class="card">
+            <h3>Maintenance Alerts</h3>
+            <div class="value" id="maintenanceAlerts">0</div>
+        </div>
+
+        <div class="card">
+            <h3>Utilization Rate</h3>
+            <div class="value" id="utilizationRate">0%</div>
+        </div>
+
+        <div class="card">
+            <h3>Pending Cargo</h3>
+            <div class="value" id="pendingCargo">7</div>
+        </div>
+    </div>
+
+    <!-- Fleet Table -->
+    <div class="table-container">
+        <h3>Fleet Overview</h3>
+        <table id="fleetTable">
+            <thead>
+                <tr>
+                    <th>Vehicle ID</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Region</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <div class="footer">
+        Fleet Command Center © 2026
+    </div>
+
+</div>
+
+<script>
+const fleetData = [
+    {id: "T001", type: "Truck", status: "On Trip", region: "North"},
+    {id: "T002", type: "Truck", status: "Idle", region: "South"},
+    {id: "V001", type: "Van", status: "On Trip", region: "East"},
+    {id: "V002", type: "Van", status: "In Shop", region: "West"},
+    {id: "B001", type: "Bike", status: "Idle", region: "North"},
+    {id: "B002", type: "Bike", status: "On Trip", region: "South"},
+];
+
+function updateDashboard() {
+    const typeFilter = document.getElementById("vehicleTypeFilter").value;
+    const statusFilter = document.getElementById("statusFilter").value;
+    const regionFilter = document.getElementById("regionFilter").value;
+
+    const filtered = fleetData.filter(vehicle =>
+        (typeFilter === "All" || vehicle.type === typeFilter) &&
+        (statusFilter === "All" || vehicle.status === statusFilter) &&
+        (regionFilter === "All" || vehicle.region === regionFilter)
+    );
+
+    const activeFleet = filtered.filter(v => v.status === "On Trip").length;
+    const maintenanceAlerts = filtered.filter(v => v.status === "In Shop").length;
+    const totalFleet = filtered.length;
+    const utilizationRate = totalFleet > 0 ? ((activeFleet / totalFleet) * 100).toFixed(1) : 0;
+
+    document.getElementById("activeFleet").textContent = activeFleet;
+    document.getElementById("maintenanceAlerts").textContent = maintenanceAlerts;
+    document.getElementById("utilizationRate").textContent = utilizationRate + "%";
+
+    const tableBody = document.querySelector("#fleetTable tbody");
+    tableBody.innerHTML = "";
+
+    filtered.forEach(vehicle => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${vehicle.id}</td>
+            <td>${vehicle.type}</td>
+            <td class="status-${vehicle.status.replace(" ", "").toLowerCase()}">${vehicle.status}</td>
+            <td>${vehicle.region}</td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+document.getElementById("vehicleTypeFilter").addEventListener("change", updateDashboard);
+document.getElementById("statusFilter").addEventListener("change", updateDashboard);
+document.getElementById("regionFilter").addEventListener("change", updateDashboard);
+
+updateDashboard();
+</script>
+
+</body>
+</html>

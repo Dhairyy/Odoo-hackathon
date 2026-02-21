@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleet Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header> Fleet Management System</header>
+
+
+<!-- LOGIN PAGE -->
+<section id="loginPage" style="display:block;">
+    <div class="card">
+        <h2>Login</h2>
+        <input id="email" placeholder="Email">
+        <input id="password" type="password" placeholder="Password">
+        <select id="role">
+            <option value="Manager">Fleet Manager</option>
+            <option value="Dispatcher">Dispatcher</option>
+            <option value="Safety">Safety Officer</option>
+            <option value="Finance">Financial Analyst</option>
+        </select>
+        <button onclick="login()">Login</button>
+    </div>
+</section>
+
+<!-- MAIN SYSTEM -->
+<section id="systemPage">
+
+    <nav>
+ <!--        <button onclick="showPage('dashboard')">Dashboard</button>-->
+        <button onclick="window.location.href='dashboard.html'">
+            Dashboard
+        </button>
+        <button onclick="showPage('vehicles')">Vehicle Registry</button>
+        <button onclick="showPage('trips')">Trip Dispatcher</button>
+        <button onclick="showPage('maintenance')">Maintenance</button>
+        <button onclick="showPage('finance')">Fuel & Expenses</button>
+        <button onclick="showPage('drivers')">Drivers</button>
+        <button onclick="showPage('analytics')">Analytics</button>
+        <button onclick="logout()">Logout</button>
+    </nav>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="page">
+        <div class="card">
+            <h2>Command Center</h2>
+            <div class="kpi">Active Fleet: <span id="activeFleet"></span></div>
+            <div class="kpi">Maintenance Alerts: <span id="maintenanceCount"></span></div>
+            <div class="kpi">Utilization Rate: <span id="utilization"></span></div>
+            <div class="kpi">Pending Cargo: <span id="pendingCargo"></span></div>
+        </div>
+    </div>
+
+    <!-- VEHICLES -->
+    <div id="vehicles" class="page">
+        <div class="card">
+            <h2>Vehicle Registry</h2>
+            <input id="vModel" placeholder="Model">
+            <input id="vPlate" placeholder="License Plate">
+            <input id="vCapacity" placeholder="Max Capacity (kg)">
+            <input id="vOdo" placeholder="Odometer">
+            <button onclick="addVehicle()">Add Vehicle</button>
+            <table id="vehicleTable"></table>
+        </div>
+    </div>
+
+    <!-- TRIPS -->
+    <div id="trips" class="page">
+        <div class="card">
+            <h2>Create Trip</h2>
+            <select id="tripVehicle"></select>
+            <select id="tripDriver"></select>
+            <input id="cargoWeight" placeholder="Cargo Weight (kg)">
+            <button onclick="createTrip()">Create Trip</button>
+            <div id="tripMsg"></div>
+        </div>
+    </div>
+
+    <!-- MAINTENANCE -->
+    <div id="maintenance" class="page">
+        <div class="card">
+            <h2>Service Logs</h2>
+            <select id="maintVehicle"></select>
+            <input id="maintCost" placeholder="Maintenance Cost">
+            <button onclick="addMaintenance()">Add Service Log</button>
+        </div>
+    </div>
+
+    <!-- FINANCE -->
+    <div id="finance" class="page">
+        <div class="card">
+            <h2>Fuel & Expense Log</h2>
+            <select id="fuelVehicle"></select>
+            <input id="fuelLiters" placeholder="Liters">
+            <input id="fuelCost" placeholder="Fuel Cost">
+            <button onclick="addFuel()">Add Fuel Log</button>
+        </div>
+    </div>
+
+    <!-- DRIVERS -->
+    <div id="drivers" class="page">
+        <div class="card">
+            <h2>Driver Management</h2>
+            <input id="dName" placeholder="Driver Name">
+            <input id="dLicenseExpiry" type="date">
+            <select id="dStatus">
+                <option>On Duty</option>
+                <option>Off Duty</option>
+                <option>Suspended</option>
+            </select>
+            <button onclick="addDriver()">Add Driver</button>
+            <table id="driverTable"></table>
+        </div>
+    </div>
+
+    <!-- ANALYTICS -->
+    <div id="analytics" class="page">
+        <div class="card">
+            <h2>Operational Analytics</h2>
+            <button onclick="calculateAnalytics()">Calculate ROI</button>
+            <div id="analyticsOutput"></div>
+        </div>
+    </div>
+
+</section>
+<script src="script.js"></script>
+
+
+</body>
+</html>
